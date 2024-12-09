@@ -1,91 +1,68 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio Fenêtres</title>
+    <title>Portfolio Windows</title>
     <style>
+        :root {
+            --light-gray: #eaeaeb;
+            --light-blue: #E2EDFD;
+            --soft-purple: #DB9EE9;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             background: #000;
             min-height: 100vh;
-            margin: 0;
             display: flex;
-            justify-content: center;
             align-items: center;
-            padding: 2rem;
+            justify-content: center;
+            font-family: 'Arial', sans-serif;
         }
 
-        .facade {
-            width: 800px;
-            height: 800px;
-            position: relative;
-            background: #000;
+        .building {
+            width: 80vw;
+            height: 90vh;
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(6, 1fr);
+            gap: 10px;
+            padding: 20px;
         }
 
         .window {
-            position: absolute;
-            background: #1a1a1a;
-            border: 2px solid #333;
-            overflow: hidden;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
             cursor: pointer;
+            position: relative;
             transition: all 0.3s ease;
+            overflow: hidden;
         }
 
-        .window::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(45deg, #ffb74d, #ffd54f);
-            opacity: 0.7;
+        .window.lit {
+            background: rgba(255, 220, 130, 0.3);
+            box-shadow: 0 0 15px rgba(255, 220, 130, 0.5);
         }
 
-        .window img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            opacity: 0.6;
-            transition: opacity 0.3s ease;
-            mix-blend-mode: overlay;
-        }
-
-        .window:hover {
-            transform: scale(1.02);
-            z-index: 10;
-        }
-
-        .window:hover img {
-            opacity: 0.8;
-        }
-
-        /* Fenêtres variées */
-        .w1 { top: 5%; left: 5%; width: 120px; height: 80px; }
-        .w2 { top: 5%; left: 30%; width: 150px; height: 100px; }
-        .w3 { top: 5%; right: 5%; width: 180px; height: 120px; }
-        .w4 { top: 25%; left: 15%; width: 140px; height: 90px; }
-        .w5 { top: 25%; left: 45%; width: 200px; height: 150px; }
-        .w6 { top: 25%; right: 15%; width: 160px; height: 110px; }
-        .w7 { top: 45%; left: 5%; width: 130px; height: 180px; }
-        .w8 { top: 45%; left: 35%; width: 170px; height: 140px; }
-        .w9 { top: 45%; right: 5%; width: 190px; height: 160px; }
-        .w10 { top: 65%; left: 20%; width: 140px; height: 120px; }
-        .w11 { top: 65%; left: 50%; width: 160px; height: 130px; }
-        .w12 { top: 65%; right: 10%; width: 150px; height: 140px; }
-
-        .popup {
+        .modal {
             display: none;
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: #fff;
-            padding: 2rem;
+            background: white;
+            padding: 20px;
             border-radius: 10px;
+            max-width: 80vw;
+            max-height: 80vh;
+            overflow-y: auto;
             z-index: 1000;
-            max-width: 600px;
-            width: 90%;
         }
 
         .overlay {
@@ -95,70 +72,100 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.9);
+            background: rgba(0, 0, 0, 0.8);
             z-index: 999;
         }
 
-        /* Style des popups */
-        .popup h2 { margin-bottom: 1rem; }
-        .popup img { width: 100%; margin-bottom: 1rem; }
-        .popup p { line-height: 1.6; }
-        .close-popup {
+        .close-btn {
             position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
+            right: 10px;
+            top: 10px;
             cursor: pointer;
+            font-size: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .building {
+                grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: repeat(8, 1fr);
+                width: 95vw;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="facade">
-        <!-- Génération des fenêtres -->
-        <div class="window w1" data-project="project1"><img src="/api/placeholder/400/320" alt="Projet 1"></div>
-        <div class="window w2" data-project="project2"><img src="/api/placeholder/400/320" alt="Projet 2"></div>
-        <div class="window w3" data-project="project3"><img src="/api/placeholder/400/320" alt="Projet 3"></div>
-        <div class="window w4" data-project="project4"><img src="/api/placeholder/400/320" alt="Projet 4"></div>
-        <div class="window w5" data-project="project5"><img src="/api/placeholder/400/320" alt="Projet 5"></div>
-        <div class="window w6" data-project="project6"><img src="/api/placeholder/400/320" alt="Projet 6"></div>
-        <div class="window w7" data-project="project7"><img src="/api/placeholder/400/320" alt="Projet 7"></div>
-        <div class="window w8" data-project="project8"><img src="/api/placeholder/400/320" alt="Projet 8"></div>
-        <div class="window w9" data-project="project9"><img src="/api/placeholder/400/320" alt="Projet 9"></div>
-        <div class="window w10" data-project="project10"><img src="/api/placeholder/400/320" alt="Projet 10"></div>
-        <div class="window w11" data-project="project11"><img src="/api/placeholder/400/320" alt="Projet 11"></div>
-        <div class="window w12" data-project="project12"><img src="/api/placeholder/400/320" alt="Projet 12"></div>
-    </div>
-
-    <div class="overlay"></div>
-
-    <!-- Popups des projets -->
-    <div id="project1" class="popup">
-        <button class="close-popup">&times;</button>
-        <img src="/api/placeholder/400/320" alt="Projet 1">
-        <h2>Projet 1</h2>
-        <p>Description du projet...</p>
-    </div>
-    <!-- Répéter pour les autres projets -->
+    <div class="building" id="building"></div>
+    <div class="overlay" id="overlay"></div>
 
     <script>
-        document.querySelectorAll('.window').forEach(window => {
-            window.addEventListener('click', () => {
-                const projectId = window.getAttribute('data-project');
-                document.getElementById(projectId).style.display = 'block';
-                document.querySelector('.overlay').style.display = 'block';
-            });
-        });
+        const projects = [
+            {
+                title: "Interactive Data Visualization",
+                description: "A real-time data visualization project using D3.js and WebSocket",
+                image: "https://picsum.photos/400/300"
+            },
+            {
+                title: "AI-Powered Chat Application",
+                description: "Built using Python and TensorFlow for natural language processing",
+                image: "https://picsum.photos/400/301"
+            },
+            {
+                title: "Travel Blog - Japan 2023",
+                description: "Photo journal of my three-week expedition across Japan",
+                image: "https://picsum.photos/400/302"
+            },
+            // Add more projects as needed
+        ];
 
-        document.querySelectorAll('.close-popup').forEach(button => {
-            button.addEventListener('click', () => {
-                document.querySelectorAll('.popup').forEach(popup => {
-                    popup.style.display = 'none';
-                });
-                document.querySelector('.overlay').style.display = 'none';
+        function createWindows() {
+            const building = document.getElementById('building');
+            for (let i = 0; i < 24; i++) {
+                const window = document.createElement('div');
+                window.className = 'window';
+                if (i < projects.length) {
+                    window.addEventListener('click', () => openModal(i));
+                }
+                building.appendChild(window);
+            }
+        }
+
+        function createModal(project) {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <span class="close-btn">&times;</span>
+                <h2>${project.title}</h2>
+                <img src="${project.image}" alt="${project.title}" style="max-width: 100%; margin: 20px 0;">
+                <p>${project.description}</p>
+            `;
+            return modal;
+        }
+
+        function openModal(projectIndex) {
+            const project = projects[projectIndex];
+            const modal = createModal(project);
+            document.body.appendChild(modal);
+            
+            const overlay = document.getElementById('overlay');
+            overlay.style.display = 'block';
+            modal.style.display = 'block';
+
+            const window = document.querySelectorAll('.window')[projectIndex];
+            window.classList.add('lit');
+
+            const closeBtn = modal.querySelector('.close-btn');
+            closeBtn.addEventListener('click', () => {
+                modal.remove();
+                overlay.style.display = 'none';
             });
-        });
+
+            overlay.addEventListener('click', () => {
+                modal.remove();
+                overlay.style.display = 'none';
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', createWindows);
     </script>
 </body>
 </html>
