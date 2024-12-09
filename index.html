@@ -3,62 +3,430 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio Créatif</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <title>Portfolio Immeuble Haussmannien</title>
+    <style>
+        :root {
+            --building-color: #E8E2D6;
+            --stone-color: #B8997A;
+            --window-frame: #654321;
+            --balcony-color: #8B7355;
+            --door-color: #5C4033;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(to bottom, #87CEEB, #E8E2D6);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .building {
+            width: 1000px;
+            height: 800px;
+            background: var(--building-color);
+            position: relative;
+            border: 2px solid #666;
+            box-shadow: 0 0 50px rgba(0,0,0,0.2);
+        }
+
+        /* Toit mansardé */
+        .roof {
+            position: absolute;
+            top: -40px;
+            width: 100%;
+            height: 40px;
+            background: #5D4037;
+            clip-path: polygon(0 100%, 5% 0, 95% 0, 100% 100%);
+        }
+
+        /* Fenêtres de différentes tailles */
+        .window {
+            position: absolute;
+            background: #1a1a1a;
+            border: 5px solid var(--stone-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .window img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+
+        .window:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+        }
+
+        .window:hover img {
+            opacity: 1;
+        }
+
+        /* Grands balcons */
+        .balcony-large {
+            position: absolute;
+            width: 160px;
+            height: 30px;
+            background: var(--balcony-color);
+            border: 3px solid #654321;
+        }
+
+        .balcony-large::before {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 10px;
+            right: 10px;
+            height: 20px;
+            background: repeating-linear-gradient(90deg, 
+                var(--balcony-color),
+                var(--balcony-color) 5px,
+                transparent 5px,
+                transparent 15px
+            );
+        }
+
+        /* Petits balcons */
+        .balcony-small {
+            position: absolute;
+            width: 100px;
+            height: 20px;
+            background: var(--balcony-color);
+            border: 2px solid #654321;
+        }
+
+        .balcony-small::before {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 8px;
+            right: 8px;
+            height: 15px;
+            background: repeating-linear-gradient(90deg,
+                var(--balcony-color),
+                var(--balcony-color) 3px,
+                transparent 3px,
+                transparent 10px
+            );
+        }
+
+        /* Grande fenêtre */
+        .window-large {
+            width: 140px;
+            height: 200px;
+        }
+
+        /* Fenêtre moyenne */
+        .window-medium {
+            width: 120px;
+            height: 180px;
+        }
+
+        /* Petite fenêtre */
+        .window-small {
+            width: 100px;
+            height: 150px;
+        }
+
+        /* Positionnement spécifique des fenêtres */
+        #window1 { top: 100px; left: 80px; }
+        #balcony1 { top: 300px; left: 70px; }
+
+        #window2 { top: 100px; left: 280px; }
+        #balcony2 { top: 300px; left: 270px; }
+
+        #window3 { top: 100px; left: 480px; }
+        #balcony3 { top: 300px; left: 470px; }
+
+        #window4 { top: 350px; left: 80px; }
+        #balcony4 { top: 550px; left: 70px; }
+
+        #window5 { top: 350px; left: 280px; }
+        #balcony5 { top: 550px; left: 270px; }
+
+        #window6 { top: 350px; left: 480px; }
+        #balcony6 { top: 550px; left: 470px; }
+
+        /* Moulures horizontales */
+        .molding {
+            position: absolute;
+            width: 100%;
+            height: 20px;
+            background: var(--stone-color);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+        }
+
+        .molding-top { top: 50px; }
+        .molding-middle { top: 320px; }
+        .molding-bottom { bottom: 100px; }
+
+        /* Porte d'entrée */
+        .door {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 180px;
+            height: 280px;
+            background: var(--door-color);
+            border: 8px solid var(--stone-color);
+            border-radius: 10px 10px 0 0;
+        }
+
+        .door::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 20px;
+            background: var(--stone-color);
+            border-radius: 5px 5px 0 0;
+        }
+
+        /* Popup et overlay */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #fff;
+            padding: 2.5rem;
+            border-radius: 15px;
+            z-index: 1000;
+            max-width: 700px;
+            width: 90%;
+            box-shadow: 0 5px 30px rgba(0,0,0,0.3);
+        }
+
+        .popup img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        .popup h2 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+
+        .popup p {
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+
+        .popup .technologies {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+        }
+
+        .close-popup {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #333;
+            transition: transform 0.3s ease;
+        }
+
+        .close-popup:hover {
+            transform: rotate(90deg);
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 999;
+            backdrop-filter: blur(3px);
+        }
+
+        /* Décorations supplémentaires */
+        .corner-decoration {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: var(--stone-color);
+        }
+
+        .corner-decoration.top-left { top: 0; left: 0; }
+        .corner-decoration.top-right { top: 0; right: 0; }
+        .corner-decoration.bottom-left { bottom: 0; left: 0; }
+        .corner-decoration.bottom-right { bottom: 0; right: 0; }
+
+        @media (max-width: 1024px) {
+            .building {
+                width: 90vw;
+                height: 80vh;
+            }
+
+            .window {
+                transform: scale(0.8);
+            }
+
+            .balcony-large,
+            .balcony-small {
+                transform: scale(0.8);
+            }
+        }
+    </style>
 </head>
 <body>
-    <div id="canvas-container"></div>
-    
-    <div class="content">
-        <section id="about" class="section">
-            <h1>Jean Dupont</h1>
-            <p>Développeur Créatif & Voyageur</p>
-        </section>
+    <div class="building">
+        <div class="roof"></div>
+        <div class="molding molding-top"></div>
+        <div class="molding molding-middle"></div>
+        <div class="molding molding-bottom"></div>
+        
+        <!-- Fenêtres avec balcons -->
+        <div id="window1" class="window window-large" data-project="project1">
+            <img src="/api/placeholder/400/320" alt="Projet 1">
+        </div>
+        <div id="balcony1" class="balcony-large"></div>
 
-        <section id="projects" class="section">
-            <div class="project-grid">
-                <div class="project-card" data-project="1">
-                    <h3>Application Mobile Eco-Responsable</h3>
-                    <p>React Native • 2023</p>
-                </div>
-                <div class="project-card" data-project="2">
-                    <h3>Plateforme E-commerce</h3>
-                    <p>Vue.js • 2023</p>
-                </div>
-                <div class="project-card" data-project="3">
-                    <h3>Site Web Immersif</h3>
-                    <p>Three.js • 2024</p>
-                </div>
-            </div>
-        </section>
+        <div id="window2" class="window window-medium" data-project="project2">
+            <img src="/api/placeholder/400/320" alt="Projet 2">
+        </div>
+        <div id="balcony2" class="balcony-small"></div>
 
-        <section id="travels" class="section">
-            <div class="travel-grid">
-                <div class="travel-card" data-travel="1">
-                    <h3>Japon</h3>
-                    <p>Tokyo • Kyoto • Osaka</p>
-                </div>
-                <div class="travel-card" data-travel="2">
-                    <h3>Islande</h3>
-                    <p>Road trip autour de l'île</p>
-                </div>
-                <div class="travel-card" data-travel="3">
-                    <h3>Pérou</h3>
-                    <p>Machu Picchu • Cusco</p>
-                </div>
-            </div>
-        </section>
+        <div id="window3" class="window window-large" data-project="project3">
+            <img src="/api/placeholder/400/320" alt="Projet 3">
+        </div>
+        <div id="balcony3" class="balcony-large"></div>
+
+        <div id="window4" class="window window-medium" data-project="project4">
+            <img src="/api/placeholder/400/320" alt="Projet 4">
+        </div>
+        <div id="balcony4" class="balcony-small"></div>
+
+        <div id="window5" class="window window-large" data-project="project5">
+            <img src="/api/placeholder/400/320" alt="Projet 5">
+        </div>
+        <div id="balcony5" class="balcony-large"></div>
+
+        <div id="window6" class="window window-medium" data-project="project6">
+            <img src="/api/placeholder/400/320" alt="Projet 6">
+        </div>
+        <div id="balcony6" class="balcony-small"></div>
+
+        <div class="door"></div>
+        
+        <!-- Décorations des coins -->
+        <div class="corner-decoration top-left"></div>
+        <div class="corner-decoration top-right"></div>
+        <div class="corner-decoration bottom-left"></div>
+        <div class="corner-decoration bottom-right"></div>
     </div>
 
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal">&times;</span>
-            <div id="modal-content"></div>
+    <div class="overlay"></div>
+
+    <!-- Popups des projets -->
+    <div id="project1" class="popup">
+        <button class="close-popup">&times;</button>
+        <img src="/api/placeholder/400/320" alt="Projet 1">
+        <h2>Application E-commerce</h2>
+        <p>Une plateforme e-commerce complète avec système de panier, paiement et gestion des commandes.</p>
+        <div class="technologies">
+            <strong>Technologies:</strong> React, Node.js, MongoDB, Stripe
         </div>
     </div>
 
-    <script src="animation.js"></script>
-    <script src="main.js"></script>
-</body>
-</html>
+    <div id="project2" class="popup">
+        <button class="close-popup">&times;</button>
+        <img src="/api/placeholder/400/320" alt="Projet 2">
+        <h2>Application Mobile Fitness</h2>
+        <p>Application de suivi d'entraînement avec plans personnalisés et suivi des progrès.</p>
+        <div class="technologies">
+            <strong>Technologies:</strong> Flutter, Firebase, Google Fit API
+        </div>
+    </div>
+
+    <div id="project3" class="popup">
+        <button class="close-popup">&times;</button>
+        <img src="/api/placeholder/400/320" alt="Projet 3">
+        <h2>Portfolio Photographique</h2>
+        <p>Site web de présentation de photographies avec galerie dynamique et gestion des collections.</p>
+        <div class="technologies">
+            <strong>Technologies:</strong> Vue.js, Nuxt.js, Cloudinary
+        </div>
+    </div>
+
+    <div id="project4" class="popup">
+        <button class="close-popup">&times;</button>
+        <img src="/api/placeholder/400/320" alt="Projet 4">
+        <h2>Application de Gestion</h2>
+        <p>Système de gestion des tâches et projets avec tableau de bord analytique.</p>
+        <div class="technologies">
+            <strong>Technologies:</strong> Angular, Express, PostgreSQL
+        </div>
+    </div>
+
+    <div id="project5" class="popup">
+        <button class="close-popup">&times;</button>
+        <img src="/api/placeholder/400/320" alt="Projet 5">
+        <h2>Plateforme d'Apprentissage</h2>
+        <p>LMS complet avec cours en ligne, quiz et suivi des progrès.</p>
+        <div class="technologies">
+            <strong>Technologies:</strong> Next.js, Django, AWS
+        </div>
+    </div>
+
+    <div id="project6" class="popup">
+        <button class="close-popup">&times;</button>
+        <img src="/api/placeholder/400/320" alt="Projet 6">
+        <h2>Application de Réservation</h2>
+        <p>Système de réservation en ligne avec calendrier interactif et paiements.</p>
+        <div class="technologies">
+            <strong>Technologies:</strong> React Native, Node.js, MongoDB
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.window').forEach(window => {
+            window.addEventListener('click', () => {
+                const projectId = window.getAttribute('data-project');
+                document.getElementById(projectId).style.display = 'block';
+                document.querySelector('.overlay').style.display = 'block';
+                window.classList.add('active');
+            });
+        });
+
+        document.querySelectorAll('.close-popup').forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.popup').forEach(popup => {
+                    popup.style.display = 'none';
+                });
+                document.querySelector('.overlay').style.display = 'none';
+                document.querySelectorAll('.window').forEach(window => {
+                    window.classList.remove('active');
+                });
+            });
+        });
+
+        document.querySelector('.overlay').addEventListener
